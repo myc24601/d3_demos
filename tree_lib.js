@@ -1,11 +1,11 @@
 class TreeNode {
-    constructor(name, parent = null, left = null, right = null) {
-        if (!name) {
-            console.error("node name must be specified.");
+    constructor(id, name, parent = null, left = null, right = null) {
+        if (!id) {
+            console.error("node id must be specified")
         }
-
-        if (!parent) {
-            parent = null;
+    
+        if (!name) {
+            name = "default node name"; // give a default
         }
 
         this.name = name;
@@ -86,6 +86,22 @@ class BinaryTree {
                 return d3Obj;
             }
         }
+    }
+}
+
+class TreeNodeFactory {
+    constructor() {
+        this.availableID = [];
+        this.nextID = 1;
+    }
+
+    createNode(name) {
+        if (!name) {
+            console.error("TreeNodeFactory: a node name must be specified in creating node.")
+        }
+        var newNode = new TreeNode(this.nextID, name)
+        this.nextID += 1;
+        return newNode;
     }
 }
 
