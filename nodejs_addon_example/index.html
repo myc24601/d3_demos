@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Demo</title>
+        <meta charset="utf-8" />
+    </head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <body>
+        <div style="width:1000; height:1000">
+            <svg style="width:1000; height:1000;"></svg>
+        </div>
+        <script>
+            d3.json("http://localhost:8000/demo_tree.json").then(data => viz(data));
+
+            function viz(data) {
+                var root = d3.hierarchy(data, d => d.children);
+                var treeChart = d3.tree();
+                treeChart.size([500, 500]);
+                var treeData = treeChart(root).descendants()
+
+                // Filter dummy nodes
+                var realNodes = treeData.filter(function(d) {
+                    return d.data.name != "dummy";
+                })
+
+                d3.select("svg").append("g").attr("id", "treeG")
+                  .attr("transform", "translate(60, 20)")
+                  .selectAll("g").data(realNodes).enter()
+                  .append("g").attr("class", "node")
+                  .attr("transform", d => `translate(${d.x}, ${d.y})`);
+                  
+                d3.selectAll("g.node").append("circle")
+                  .attr("r", 10).style("fill", "black").style("stroke", "gray")
+                  .style("stroke-width", "2px");
+
+                d3.select("#treeG")
+                  .selectAll("line").data(realNodes.filter(d => d.parent))
+                  .enter().insert("line", "g")
+                  .attr("x1", d => d.parent.x)
+                  .attr("y1", d => d.parent.y)
+                  .attr("x2", d => d.x)
+                  .attr("y2", d => d.y)
+                  .style("stroke", "black")
+            }
+        </script>
+    </body>
+</html>
